@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>年収計算</title>
+  <style media="screen">
+    #input {
+      margin: 30px auto;
+    }
+    #standard, #option {
+      margin-top: 10px;
+      margin-bottom: 30px;
+    }
+    #calc {
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <h1>年収計算</h1>
+  <div id="content">
+    <div id="input">
+      <div id="standard">
+        <div class="hour-wage">
+          <label for="hour-wage">時給</label>
+          <input type="text" id="hour-wage" name="hour-wage" value="" placeholder="1000">
+        </div>
+        <div class="during"></div>
+        <div class="shift"></div>
+      </div>
+      <div id="option">
+        <p>夏休み</p>
+        <div class="during"></div>
+        <div class="shift"></div>
+      </div>
+    </div>
+
+    <div id="operator">
+      <div id="calc-area" style="border-top:solid 1px #4a90D0; margin-top: 20px">
+        <button id="calc" class="btn btn-primary">計算</button>
+      </div>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <!-- templates -->
+
+  <script type="text/template" id="tpl-during">
+    <label for="">期間</label>
+    <input name="start" type="date" value="<%=start%>">
+    <input name="end" type="date" value="<%=end%>">
+  </script>
+
+  <script type="text/template" id="tpl-shift">
+    <label for="">勤務体系</label>
+    <% _.each(date, function(day, i) { %>
+    <div class="week_<%=i%>">
+      <input type="checkbox" class="week-checkbox">
+      <%= day %>
+      <input disabled name="start" type="time" value="10:00">
+      <input disabled name="end" type="time" value="19:00">
+    </div>
+    <% }); %>
+  </script>
+
+  <script type="text/template" id="tpl-result">
+    <div class="alert alert-info">
+      <p>¥<%=totalIncome%></p>
+    </div>
+  </script>
+
+</body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js" charset="utf-8"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js" charset="utf-8"></script>
+<script type="text/javascript">
+  $(function () {
+    const DATE = ['日', '月', '火', '水', '木', '金', '土'];
+    const HOUR_WAGE = 1100;
+    function initialize() {
+      render();
+    }
+
+    function template(dst, tpl, data) {
+      var compiled = _.template($(tpl).html());
+      $(dst).html(compiled(data));
+    }
+
+    function render() {
+      var year = new Date().getFullYear();
+      template('#standard .during', '#tpl-during', {start: year+'-01-01', end: year+'-12-31'});
+      template('#option .during'  , '#tpl-during', {start: year+'-08-01', end: year+'-10-01'});
+
+      template('#standard .shift', '#tpl-shift', {date: DATE});
+      template('#option .shift'  , '#tpl-shift', {date: DATE});
+    }
+
+    function getFormatDate(str, date) {
+      date = date || new Date();
+    }
+
+
+     // Ex: timeDiff('19:20', '10:50') // => 8.5
+    function timeDiff(a, b) {
+      a = a.split(':');
+      b = b.split(':');
+      return a[0] - b[0] + ((a[1] - b[1]) / 60.0);
+    }
+
+    // Get params
+    function getParam () {
+      var hour_wage = $('[name="hour-wage"]').val();
+      var during    = $('#standard .during input').map(function () { return $(this).val()}).get();
+      var shift     = parseShift($('#standard .shift > div'));
+
+      var option = {};
+      if($('#option').is(':visible')) {
+        var optionShift = parseShift($('#option .shift > div'));
+        if(Object.keys(optionShift).length) {
+          option['shift']  = optionShift;
+          option['during'] = $('#option .during input').map(function () { return $(this).val()}).get();
+        }
+      }
+
+      return {
+        during: during,
+        hour_wage: hour_wage,
+        shift: shift,
+        option: option
+      }
+    }
+
+    function parseShift (dom) {
+      var shift = {};
+      dom.each(function (i, v) {
+        var input = $(v).children('[type="time"]:enabled');
+        if (input.size()) {
+          var time = timeDiff(
+            input.filter('[name="end"]').val(),
+            input.filter('[name="start"]').val()
+          );
+          if(time >= 8) time -= 1;
+
+          var key = parseInt($(v).attr('class').replace('week_', ''), 10);
+          shift[key] = time;
+        }
+      });
+      return shift;
+    }
+
+    function showResult (data) {
+      $('#result').html(
+        '<div class="alert alert-info">¥ '
+      + data['total_income'].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+      + '</div>');
+    }
+
+    // 総額の計算
+    function getTotalIncome(hourWage, during, shift) {
+      var totalIncome = 0
+      ,   [start, end] = during;
+      hourWage = (hourWage == '') ? HOUR_WAGE : hourWage;
+
+      _.each(shift, function (time, youbi) {
+        var num =  getNumYoubi(youbi, start, end);
+        totalIncome += hourWage * time * num;
+      });
+
+      return totalIncome;
+    }
+
+    // 指定期間中にある指定曜日の個数を返却
+    function getNumYoubi(youbi, start, end) {
+      var s = new Date(start);
+      var e = new Date(end);
+      var daySec = 1000*60*60*24;
+
+      var diff = youbi - s.getDay();
+      if(diff >= 0) diff -= 7;
+
+      s.setDate(s.getDate() + diff);
+      var days = (e.getTime() - s.getTime()) / daySec;
+      return Math.floor(days / 7);
+    }
+
+    // Toggle checkbox
+    $(document).on('change', '.week-checkbox', function () {
+      var $this = $(this);
+      $this.siblings('input[type="time"]').prop('disabled', !$this.prop('checked'));
+    });
+
+    // Toggle Option Visible
+    $(document).on('click', '#option-btn', function () {
+      $('#option').toggle(200);
+    });
+
+    // Calculate Request
+    $(document).on('click', '#calc', function () {
+      var params = getParam();
+      var totalIncome = getTotalIncome(params['hour_wage'], params['during'], params['shift']);
+      if(Object.keys(params.option).length > 0) {
+        var option = params.option;
+        var normalIncome = getTotalIncome(params['hour_wage'], option['during'], params['shift']);
+        var optionIncome = getTotalIncome(params['hour_wage'], option['during'], option['shift']);
+        totalIncome -= normalIncome - optionIncome;
+      }
+      console.log(totalIncome);
+
+      var result = totalIncome.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+      template('#result', '#tpl-result', {totalIncome: result});
+    });
+
+    initialize();
+  });
+</script>
+</html>
