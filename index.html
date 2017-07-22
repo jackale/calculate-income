@@ -11,30 +11,36 @@
   <header>
     <h4>年収計算</h4>
   </header>
-  <div id="content">
-    <div id="input">
-      <div id="standard">
-        <div class="hour-wage">
-          <label for="hour-wage">時給</label>
-          <input type="text" id="hour-wage" name="hour-wage" value="" placeholder="1000">
+  <div id="content" class="container">
+    <div class="row">
+      <div class="hour-wage">
+        <label for="hour-wage">時給</label>
+        <input type="text" id="hour-wage" name="hour-wage" value="" placeholder="1000">
+      </div>
+    </div>
+    <div class="row">
+      <div id="wrap-input" class="six columns">
+      <div id="input">
+        <div id="standard">
+          <div class="during"></div>
+          <div class="shift"></div>
         </div>
-        <div class="during"></div>
-        <div class="shift"></div>
+        <div id="option">
+          <p>夏休み</p>
+          <div class="during"></div>
+          <div class="shift"></div>
+        </div>
       </div>
-      <div id="option">
-        <p>夏休み</p>
-        <div class="during"></div>
-        <div class="shift"></div>
-      </div>
-    </div>
 
-    <div id="operator">
-      <div id="calc-area" style="border-top:solid 1px #4a90D0; margin-top: 20px">
-        <button id="calc" class="btn btn-primary">計算</button>
+      <div id="operator">
+        <div id="calc-area" style="border-top:solid 1px #4a90D0; margin-top: 20px">
+          <button id="calc" class="btn btn-primary">計算</button>
+        </div>
       </div>
-    </div>
+      </div>
 
-    <div id="result"></div>
+      <div id="result" class="six columns"></div>
+    </div>
   </div>
 
   <!-- templates -->
