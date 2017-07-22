@@ -1,0 +1,25 @@
+body{
+  margin: 0;
+}
+header{
+  background-color: black;
+  color: white;
+  /*height: 50px;*/
+}
+header h4 {
+  padding: 10px;
+}
+
+#content {
+  margin: 10px;
+}
+/*#input {
+  margin: 30px auto;
+}
+#standard, #option {
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+#calc {
+  margin-top: 30px;
+}*/
