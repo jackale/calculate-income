@@ -10,6 +10,20 @@ header h4 {
   padding: 10px;
 }
 
+input[type=checkbox], input[type=time] {
+  margin: 3px;
+}
+
+.config {
+  margin-bottom: 40px;
+}
+.config h5 {
+  margin: 10px -20px;
+}
+
+.week_0 { color: red; }
+.week_6 { color: blue; }
+
 /*#input {
   margin: 30px auto;
 }

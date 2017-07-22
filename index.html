@@ -19,24 +19,24 @@
       </div>
     </div>
     <div class="row">
-      <div id="wrap-input" class="six columns">
-      <div id="input">
-        <div id="standard">
+      <div id="input" class="six columns">
+        <div id="standard" class="config">
+          <h5>平時</h5>
           <div class="during"></div>
           <div class="shift"></div>
         </div>
-        <div id="option">
-          <p>夏休み</p>
+        <div id="option" class="config">
+          <h5>夏休み</h5>
           <div class="during"></div>
           <div class="shift"></div>
         </div>
       </div>
 
       <div id="operator">
-        <div id="calc-area" style="border-top:solid 1px #4a90D0; margin-top: 20px">
+        <button id="calc" class="btn btn-primary">defaultに戻す</button>
+        <div id="calc-area">
           <button id="calc" class="btn btn-primary">計算</button>
         </div>
-      </div>
       </div>
 
       <div id="result" class="six columns"></div>
@@ -47,7 +47,7 @@
 
   <script type="text/template" id="tpl-during">
     <label for="">期間</label>
-    <input name="start" type="date" value="<%=start%>">
+    <input name="start" type="date" value="<%=start%>"> 〜
     <input name="end" type="date" value="<%=end%>">
   </script>
 
