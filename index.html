@@ -13,20 +13,19 @@
   </header>
   <div id="content" class="container">
     <div class="row">
-    </div>
-    <div class="row">
       <div id="input" class="six columns">
+        <h5>入力</h5>
         <div class="hour-wage">
           <label for="hour-wage">時給</label>
           <input type="text" id="hour-wage" name="hour-wage" value="" placeholder="1000">
         </div>
         <div id="standard" class="config">
-          <h5>平時</h5>
+          <h6>平時</h6>
           <div class="during"></div>
           <div class="shift"></div>
         </div>
         <div id="option" class="config">
-          <h5>夏休み</h5>
+          <h6>夏休み</h6>
           <div class="during"></div>
           <div class="shift"></div>
         </div>
@@ -34,12 +33,12 @@
 
       <div id="show-space" class="six columns">
         <h5>結果</h5>
-        <div id="result">
-        </div>
         <div id="operator">
           <div id="calc-area">
-            <button id="clear" class="btn btn-primary">CLEAR</button>
+            <button id="revert">CLEAR</button>
             <button id="calc" class="button-primary">Calculate</button>
+          </div>
+          <div id="result">
           </div>
         </div>
 
@@ -68,7 +67,7 @@
   </script>
 
   <script type="text/template" id="tpl-result">
-    <div class="alert alert-info">
+    <div class="result">
       <p>¥<%=totalIncome%></p>
     </div>
   </script>

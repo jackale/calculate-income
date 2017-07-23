@@ -118,6 +118,10 @@ $(function () {
     $('#option').toggle(200);
   });
 
+  // Revert to default
+  $(document).on('click', '#rever', function () {
+  });
+
   // Calculate Request
   $(document).on('click', '#calc', function () {
     var params = getParam();

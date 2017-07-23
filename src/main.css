@@ -14,8 +14,9 @@ header h4 {
   margin: 0px;
 }
 
-h5 {
+h6 {
   color: #1EAEDB;
+  margin: 10px 0px;
 }
 
 input[type=checkbox], input[type=time] {
@@ -32,15 +33,17 @@ input[type=checkbox], input[type=time] {
 }
 h5 {
 /*.config h5 {*/
-  margin: 10px -20px;
+  /*margin: 10px -20px;*/
 }
 #result {
   height: 50px;
   font-size: 20px;
 }
-
-.week_0 { color: red; }
-.week_6 { color: blue; }
+.result {
+  color: #019357;
+}
+.week_0 { color: #fc7667; }
+.week_6 { color: #4666c9; }
 
 /*#input {
   margin: 30px auto;
