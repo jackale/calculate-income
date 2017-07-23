@@ -14,6 +14,10 @@ header h4 {
   margin: 0px;
 }
 
+h5 {
+  color: #1EAEDB;
+}
+
 input[type=checkbox], input[type=time] {
   margin: 3px;
 }
