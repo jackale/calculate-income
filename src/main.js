@@ -3,6 +3,7 @@ $(function () {
   const HOUR_WAGE = 1100;
   function initialize() {
     render();
+    template('#result', '#tpl-result', {totalIncome: 0});
   }
 
   function template(dst, tpl, data) {
@@ -119,7 +120,9 @@ $(function () {
   });
 
   // Revert to default
-  $(document).on('click', '#rever', function () {
+  $(document).on('click', '#revert', function () {
+    $('[name="hour-wage"]').val('');
+    initialize();
   });
 
   // Calculate Request
