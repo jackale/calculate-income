@@ -1,24 +1,38 @@
 body{
   margin: 0;
+  /*background-color: #effdff;*/
 }
 header{
-  background-color: black;
-  color: white;
+  /*background-color: black;*/
+  color: black;
+  text-align: center;
+  border-bottom: 1px solid #c0dee0;
   /*height: 50px;*/
 }
 header h4 {
   padding: 10px;
+  margin: 0px;
 }
 
 input[type=checkbox], input[type=time] {
   margin: 3px;
 }
 
+#content {
+  background-color: white;
+  padding: 50px
+}
+
 .config {
   margin-bottom: 40px;
 }
-.config h5 {
+h5 {
+/*.config h5 {*/
   margin: 10px -20px;
+}
+#result {
+  height: 50px;
+  font-size: 20px;
 }
 
 .week_0 { color: red; }
