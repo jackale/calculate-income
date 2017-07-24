@@ -141,5 +141,13 @@ $(function () {
     template('#result', '#tpl-result', {totalIncome: result});
   });
 
+
+  $(document).on('click', '#help', function () {
+       $('#pop-help, #mask').show();
+   });
+   $(document).on('click', '#pop-close, #mask', function(e) {
+       $('#pop-help, #mask').hide();
+   });
+
   initialize();
 });
