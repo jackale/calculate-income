@@ -96,6 +96,20 @@
 
   <script type="text/template" id="tpl-result">
     <div class="result">
+      <table class="u-full-width"><tbody>
+        <tr>
+          <td>総出勤日数</td><td><%= workDays %>日</td>
+        </tr>
+        <tr>
+          <td>総勤務時間</td><td><%= workTime %>時間</td>
+        </tr>
+        <tr>
+          <td>総祝日数</td><td><%= holidays %>日</td>
+        </tr>
+        <tr>
+          <td>年収</td><td><i class="fa fa-jpy" aria-hidden="true"></i><%=totalIncome%></td>
+        </tr>
+      </tbody></table>
       <p>¥<%=totalIncome%></p>
     </div>
   </script>

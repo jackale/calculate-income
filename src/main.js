@@ -6,7 +6,12 @@ $(function () {
 
   function initialize() {
     render();
-    template('#result', '#tpl-result', {totalIncome: 0});
+    template('#result', '#tpl-result', {
+      workDays: 0,
+      workTime: 0,
+      holidays: 0,
+      totalIncome: 0
+    });
     $("#notice-space").empty();
   }
 

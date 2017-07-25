@@ -32,7 +32,7 @@ input[type=checkbox], input[type=time] {
 
 #content {
   background-color: white;
-  padding: 30px 50px;
+  padding: 20px 50px;
 }
 
 .config {
@@ -88,7 +88,7 @@ h5 {
 
 #notice-space {
   height: 60px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .pop-close {
