@@ -7,6 +7,7 @@ $(function () {
   function initialize() {
     render();
     template('#result', '#tpl-result', {totalIncome: 0});
+    $("#notice-space").empty();
   }
 
   function template(dst, tpl, data) {
@@ -67,7 +68,8 @@ $(function () {
           input.filter('[name="end"]').val(),
           input.filter('[name="start"]').val()
         );
-        if(time >= 8) time -= 1;
+        if (6 < time && time <= 8) time -= 0.45;
+        else if(time > 8) time -= 1;
 
         var key = parseInt($(v).attr('class').replace('week_', ''), 10);
         shift[key] = time;
@@ -123,6 +125,8 @@ $(function () {
       return (s < h && h < e) && +youbi === h.getDay();
     });
 
+    console.log("[debug] 祝日リスト ", filtered);
+
     return filtered.length;
   }
 
@@ -155,6 +159,7 @@ $(function () {
 
   function alertMessage (mes) {
     console.log("[WIP] "+mes);
+    template("#notice-space", "#tpl-notice", {message: mes});
   }
 
   // Toggle checkbox
@@ -176,6 +181,7 @@ $(function () {
 
   // Calculate Request
   $(document).on('click', '#calc', function () {
+    $("#notice-space").empty();
     var params = getParam();
     var totalIncome = getTotalIncome(params['hour_wage'], params['during'], params['shift']);
     if(Object.keys(params.option).length > 0) {

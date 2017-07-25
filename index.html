@@ -13,6 +13,9 @@
   </header>
   <div id="content" class="container">
     <div class="row">
+      <div id="notice-space"></div>
+    </div>
+    <div class="row">
       <div id="input" class="six columns">
         <h5>入力</h5>
         <div class="hour-wage">
@@ -50,8 +53,8 @@
     <p class="description">
       入力値に応じて年収計算を行います。 <br>
       各曜日の日数を取得して計算します。 <br>
-      6時間以上の勤務は休憩分の１時間引いて計算します。<br>
-      ※ 祝日には対応していません。
+      休憩分は差し引いて計算します。<br>
+      ※ 祝日に対応してます。
     </p>
     <div class="description">
       <dl class="">
@@ -94,6 +97,12 @@
   <script type="text/template" id="tpl-result">
     <div class="result">
       <p>¥<%=totalIncome%></p>
+    </div>
+  </script>
+
+  <script type="text/template" id="tpl-notice">
+    <div class="alert">
+      <%= message %>
     </div>
   </script>
 </body>
