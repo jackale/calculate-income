@@ -1,6 +1,9 @@
 $(function () {
   const DATE = ['日', '月', '火', '水', '木', '金', '土'];
   const HOUR_WAGE = 1100;
+  const API_URL = 'https://holidays-jp.github.io/api/v1/date.json';
+  var _holidays = null;
+
   function initialize() {
     render();
     template('#result', '#tpl-result', {totalIncome: 0});
@@ -86,9 +89,11 @@ $(function () {
     ,   [start, end] = during;
     hourWage = (hourWage == '') ? HOUR_WAGE : hourWage;
 
+    // var holidays = countHolidays(start, end, _.keys(shift));
     _.each(shift, function (time, youbi) {
       var num =  getNumYoubi(youbi, start, end);
-      totalIncome += hourWage * time * num;
+      var holidays = countHolidays(youbi, start, end);
+      totalIncome += hourWage * time * (num - holidays);
     });
 
     return totalIncome;
@@ -106,6 +111,50 @@ $(function () {
     s.setDate(s.getDate() + diff);
     var days = (e.getTime() - s.getTime()) / daySec;
     return Math.floor(days / 7);
+  }
+
+  // 指定期間中にある指定曜日が祝日である日数を返却
+  function countHolidays(youbi, start, end) {
+    var holidays = getHolidayList()
+    ,   s = new Date(start)
+    ,   e = new Date(end)
+    ,   filtered = _.filter(holidays, function (holiday) {
+      var h = new Date(holiday);
+      return (s < h && h < e) && +youbi === h.getDay();
+    });
+
+    return filtered.length;
+  }
+
+
+  function getHolidayList() {
+    if (_holidays == null) {
+      var holidays = getHolidaysFromAPI();
+      if (!holidays) {
+        return alertMessage("祝日の取得に失敗したため、祝日が考慮されません。");
+      }
+      _holidays = holidays;
+    }
+    return _holidays;
+  }
+
+  function getHolidaysFromAPI() {
+    var holidays;
+    $.ajax({
+      url: API_URL,
+      async: false,
+      success: function (data) {
+        holidays = _.keys(data);
+      },
+      error: function () {
+        holidays = false;
+      }
+    });
+    return holidays;
+  }
+
+  function alertMessage (mes) {
+    console.log("[WIP] "+mes);
   }
 
   // Toggle checkbox
@@ -135,7 +184,6 @@ $(function () {
       var optionIncome = getTotalIncome(params['hour_wage'], option['during'], option['shift']);
       totalIncome -= normalIncome - optionIncome;
     }
-    console.log(totalIncome);
 
     var result = totalIncome.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     template('#result', '#tpl-result', {totalIncome: result});
