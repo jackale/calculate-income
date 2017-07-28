@@ -43,7 +43,7 @@ $(function () {
 
   // Get params
   function getParam () {
-    var hour_wage = $('[name="hour-wage"]').val();
+    var hour_wage = ($('[name="hour-wage"]').val() == '') ? HOUR_WAGE : $('[name="hour-wage"]').val();
     var during    = $('#standard .during input').map(function () { return $(this).val()}).get();
     var shift     = parseShift($('#standard .shift > div'));
 
@@ -90,20 +90,28 @@ $(function () {
     + '</div>');
   }
 
-  // 総額の計算
-  function getTotalIncome(hourWage, during, shift) {
-    var totalIncome = 0
-    ,   [start, end] = during;
-    hourWage = (hourWage == '') ? HOUR_WAGE : hourWage;
+  // 各パラメータを返却
+  function calculate(hourWage, during, shift) {
+    var totalDays     = 0
+    ,   totalIncome   = 0
+    ,   totalHolidays = 0;
 
-    // var holidays = countHolidays(start, end, _.keys(shift));
+    var [start, end]  = during
+    ,   hourWage      = (hourWage == '') ? HOUR_WAGE : hourWage;
+
     _.each(shift, function (time, youbi) {
       var num =  getNumYoubi(youbi, start, end);
       var holidays = countHolidays(youbi, start, end);
-      totalIncome += hourWage * time * (num - holidays);
+      totalDays      += num - holidays;
+      totalIncome    += hourWage * time * (num - holidays);
+      totalHolidays  += holidays;
     });
 
-    return totalIncome;
+    return {
+      totalDays     : totalDays,
+      totalIncome   : totalIncome,
+      totalHolidays : totalHolidays
+    };
   }
 
   // 指定期間中にある指定曜日の個数を返却
@@ -162,8 +170,11 @@ $(function () {
     return holidays;
   }
 
+  function numberFormat (num) {
+    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+  }
+
   function alertMessage (mes) {
-    console.log("[WIP] "+mes);
     template("#notice-space", "#tpl-notice", {message: mes});
   }
 
@@ -188,16 +199,25 @@ $(function () {
   $(document).on('click', '#calc', function () {
     $("#notice-space").empty();
     var params = getParam();
-    var totalIncome = getTotalIncome(params['hour_wage'], params['during'], params['shift']);
+    var result = calculate(params['hour_wage'], params['during'], params['shift']);
+
     if(Object.keys(params.option).length > 0) {
       var option = params.option;
-      var normalIncome = getTotalIncome(params['hour_wage'], option['during'], params['shift']);
-      var optionIncome = getTotalIncome(params['hour_wage'], option['during'], option['shift']);
-      totalIncome -= normalIncome - optionIncome;
+      var normalResult = calculate(params['hour_wage'], option['during'], params['shift']);
+      var optionResult = calculate(params['hour_wage'], option['during'], option['shift']);
+
+      result["totalDays"]     -= normalResult["totalDays"]    - optionResult["totalDays"];
+      result["totalIncome"]   -= normalResult["totalIncome"]  - optionResult["totalIncome"];
+      result["totalHolidays"] -= normalResult["totalHolidays"] - optionResult["totalHolidays"];
     }
 
-    var result = totalIncome.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-    template('#result', '#tpl-result', {totalIncome: result});
+    var data = {
+      workDays    : numberFormat(result["totalDays"]),
+      workTime    : numberFormat(result["totalIncome"] / params["hour_wage"]),
+      holidays    : numberFormat(result["totalHolidays"]),
+      totalIncome : numberFormat(result["totalIncome"])
+    };
+    template('#result', '#tpl-result', data);
   });
 
 
