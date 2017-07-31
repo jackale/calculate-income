@@ -1,9 +1,18 @@
 $(function () {
   const DATE = ['日', '月', '火', '水', '木', '金', '土'];
   const HOUR_WAGE = 1100;
+  const API_URL = 'https://holidays-jp.github.io/api/v1/date.json';
+  var _holidays = null;
+
   function initialize() {
     render();
-    template('#result', '#tpl-result', {totalIncome: 0});
+    template('#result', '#tpl-result', {
+      workDays: 0,
+      workTime: 0,
+      holidays: 0,
+      totalIncome: 0
+    });
+    $("#notice-space").empty();
   }
 
   function template(dst, tpl, data) {
@@ -34,7 +43,7 @@ $(function () {
 
   // Get params
   function getParam () {
-    var hour_wage = $('[name="hour-wage"]').val();
+    var hour_wage = ($('[name="hour-wage"]').val() == '') ? HOUR_WAGE : $('[name="hour-wage"]').val();
     var during    = $('#standard .during input').map(function () { return $(this).val()}).get();
     var shift     = parseShift($('#standard .shift > div'));
 
@@ -64,7 +73,8 @@ $(function () {
           input.filter('[name="end"]').val(),
           input.filter('[name="start"]').val()
         );
-        if(time >= 8) time -= 1;
+        if (6 < time && time <= 8) time -= 0.45;
+        else if(time > 8) time -= 1;
 
         var key = parseInt($(v).attr('class').replace('week_', ''), 10);
         shift[key] = time;
@@ -80,18 +90,28 @@ $(function () {
     + '</div>');
   }
 
-  // 総額の計算
-  function getTotalIncome(hourWage, during, shift) {
-    var totalIncome = 0
-    ,   [start, end] = during;
-    hourWage = (hourWage == '') ? HOUR_WAGE : hourWage;
+  // 各パラメータを返却
+  function calculate(hourWage, during, shift) {
+    var totalDays     = 0
+    ,   totalIncome   = 0
+    ,   totalHolidays = 0;
+
+    var [start, end]  = during
+    ,   hourWage      = (hourWage == '') ? HOUR_WAGE : hourWage;
 
     _.each(shift, function (time, youbi) {
       var num =  getNumYoubi(youbi, start, end);
-      totalIncome += hourWage * time * num;
+      var holidays = countHolidays(youbi, start, end);
+      totalDays      += num - holidays;
+      totalIncome    += hourWage * time * (num - holidays);
+      totalHolidays  += holidays;
     });
 
-    return totalIncome;
+    return {
+      totalDays     : totalDays,
+      totalIncome   : totalIncome,
+      totalHolidays : totalHolidays
+    };
   }
 
   // 指定期間中にある指定曜日の個数を返却
@@ -106,6 +126,56 @@ $(function () {
     s.setDate(s.getDate() + diff);
     var days = (e.getTime() - s.getTime()) / daySec;
     return Math.floor(days / 7);
+  }
+
+  // 指定期間中にある指定曜日が祝日である日数を返却
+  function countHolidays(youbi, start, end) {
+    var holidays = getHolidayList()
+    ,   s = new Date(start)
+    ,   e = new Date(end)
+    ,   filtered = _.filter(holidays, function (holiday) {
+      var h = new Date(holiday);
+      return (s < h && h < e) && +youbi === h.getDay();
+    });
+
+    console.log("[debug] 祝日リスト ", filtered);
+
+    return filtered.length;
+  }
+
+
+  function getHolidayList() {
+    if (_holidays == null) {
+      var holidays = getHolidaysFromAPI();
+      if (!holidays) {
+        return alertMessage("祝日の取得に失敗したため、祝日が考慮されません。");
+      }
+      _holidays = holidays;
+    }
+    return _holidays;
+  }
+
+  function getHolidaysFromAPI() {
+    var holidays;
+    $.ajax({
+      url: API_URL,
+      async: false,
+      success: function (data) {
+        holidays = _.keys(data);
+      },
+      error: function () {
+        holidays = false;
+      }
+    });
+    return holidays;
+  }
+
+  function numberFormat (num) {
+    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+  }
+
+  function alertMessage (mes) {
+    template("#notice-space", "#tpl-notice", {message: mes});
   }
 
   // Toggle checkbox
@@ -127,19 +197,36 @@ $(function () {
 
   // Calculate Request
   $(document).on('click', '#calc', function () {
+    $("#notice-space").empty();
     var params = getParam();
-    var totalIncome = getTotalIncome(params['hour_wage'], params['during'], params['shift']);
+    var result = calculate(params['hour_wage'], params['during'], params['shift']);
+
     if(Object.keys(params.option).length > 0) {
       var option = params.option;
-      var normalIncome = getTotalIncome(params['hour_wage'], option['during'], params['shift']);
-      var optionIncome = getTotalIncome(params['hour_wage'], option['during'], option['shift']);
-      totalIncome -= normalIncome - optionIncome;
-    }
-    console.log(totalIncome);
+      var normalResult = calculate(params['hour_wage'], option['during'], params['shift']);
+      var optionResult = calculate(params['hour_wage'], option['during'], option['shift']);
 
-    var result = totalIncome.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-    template('#result', '#tpl-result', {totalIncome: result});
+      result["totalDays"]     -= normalResult["totalDays"]    - optionResult["totalDays"];
+      result["totalIncome"]   -= normalResult["totalIncome"]  - optionResult["totalIncome"];
+      result["totalHolidays"] -= normalResult["totalHolidays"] - optionResult["totalHolidays"];
+    }
+
+    var data = {
+      workDays    : numberFormat(result["totalDays"]),
+      workTime    : numberFormat(result["totalIncome"] / params["hour_wage"]),
+      holidays    : numberFormat(result["totalHolidays"]),
+      totalIncome : numberFormat(result["totalIncome"])
+    };
+    template('#result', '#tpl-result', data);
   });
+
+
+  $(document).on('click', '#help', function () {
+       $('#pop-help, #mask').show();
+   });
+   $(document).on('click', '#pop-close, #mask', function(e) {
+       $('#pop-help, #mask').hide();
+   });
 
   initialize();
 });

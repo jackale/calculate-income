@@ -19,13 +19,20 @@ h6 {
   margin: 10px 0px;
 }
 
+
+span#help{font-size: 25px;}
+span#help:hover {
+  color: #1EAEDB;
+  cursor: pointer;
+}
+
 input[type=checkbox], input[type=time] {
   margin: 3px;
 }
 
 #content {
   background-color: white;
-  padding: 50px
+  padding: 20px 50px;
 }
 
 .config {
@@ -41,9 +48,62 @@ h5 {
 }
 .result {
   color: #019357;
+  margin-top: 30px;
 }
 .week_0 { color: #fc7667; }
 .week_6 { color: #4666c9; }
+
+
+#mask {
+    display: none;
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.20);
+}
+#pop-help {
+    display: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 500px;
+    height: 500px;
+    margin-left: -250px;
+    margin-top: -250px;
+    padding-left: 40px;
+    padding-top: 20px;
+    padding-bottom: 40px;
+    background-color: white;
+    border-radius: 5px;
+    /*text-align: center;*/
+}
+
+.alert {
+  border-radius: 5px;
+  background-color: #ffbaba;
+  color: #b20000;
+  padding: 15px 20px;
+}
+
+#notice-space {
+  height: 60px;
+  margin-bottom: 10px;
+}
+
+.pop-close {
+  text-align: right;
+  padding-right: 40px;
+}
+
+#pop-help .description {
+  color: #64676b;
+}
+
+dt {
+  color: #1EAEDB;
+}
 
 /*#input {
   margin: 30px auto;

@@ -2,15 +2,19 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>年収計算</title>
+  <title>給与計算</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
   <link rel="stylesheet" href="src/main.css">
 </head>
 <body>
   <header>
-    <h4>年収計算</h4>
+    <h4>給与計算 <span id="help"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></h4>
   </header>
   <div id="content" class="container">
+    <div class="row">
+      <div id="notice-space"></div>
+    </div>
     <div class="row">
       <div id="input" class="six columns">
         <h5>入力</h5>
@@ -24,7 +28,7 @@
           <div class="shift"></div>
         </div>
         <div id="option" class="config">
-          <h6>夏休み</h6>
+          <h6>長期休暇</h6>
           <div class="during"></div>
           <div class="shift"></div>
         </div>
@@ -41,6 +45,33 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+  <div id="mask"></div>
+  <div id="pop-help">
+    <h5>HELP</h5>
+    <p class="description">
+      入力値に応じて年収計算を行います。 <br>
+      各曜日の日数を取得して計算します。 <br>
+      休憩分は差し引いて計算します。<br>
+      ※ 祝日に対応してます。 <br>
+      ※ 正確性は保証しかねますのであくまで目安としてお使いください。
+    </p>
+    <div class="description">
+      <dl class="">
+        <dt>時給</dt>
+        <dd>デフォルトは1100円です</dd>
+        <dt>期間</dt>
+        <dd>計算する期間を選択してください</dd>
+        <dt>勤務体系</dt>
+        <dd>シフトを入力してください</dd>
+        <dt>長期休暇</dt>
+        <dd>長期休暇等でシフトが変わる時にご利用ください</dd>
+      </dl>
+    </div>
+    <p>If you have any requests, please create issue from <a href="https://github.com/jackale/calculate-income/issues/new">here</a>.</p>
+    <div class="pop-close">
+      <button type="button" id="pop-close">閉じる</button>
     </div>
   </div>
 
@@ -66,7 +97,26 @@
 
   <script type="text/template" id="tpl-result">
     <div class="result">
-      <p>¥<%=totalIncome%></p>
+      <table class="u-full-width"><tbody>
+        <tr>
+          <td>総出勤日数</td><td><%= workDays %>日</td>
+        </tr>
+        <tr>
+          <td>総勤務時間</td><td><%= workTime %>時間</td>
+        </tr>
+        <tr>
+          <td>総祝日数</td><td><%= holidays %>日</td>
+        </tr>
+        <tr>
+          <td>年収</td><td><i class="fa fa-jpy" aria-hidden="true"></i><%=totalIncome%></td>
+        </tr>
+      </tbody></table>
+    </div>
+  </script>
+
+  <script type="text/template" id="tpl-notice">
+    <div class="alert">
+      <%= message %>
     </div>
   </script>
 </body>
