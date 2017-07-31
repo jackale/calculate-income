@@ -2,14 +2,14 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>年収計算</title>
+  <title>給与計算</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css">
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
   <link rel="stylesheet" href="src/main.css">
 </head>
 <body>
   <header>
-    <h4>年収計算 <span id="help"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></h4>
+    <h4>給与計算 <span id="help"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></h4>
   </header>
   <div id="content" class="container">
     <div class="row">
@@ -54,7 +54,8 @@
       入力値に応じて年収計算を行います。 <br>
       各曜日の日数を取得して計算します。 <br>
       休憩分は差し引いて計算します。<br>
-      ※ 祝日に対応してます。
+      ※ 祝日に対応してます。 <br>
+      ※ 正確性は保証しかねますのであくまで目安としてお使いください。
     </p>
     <div class="description">
       <dl class="">
@@ -68,7 +69,7 @@
         <dd>長期休暇等でシフトが変わる時にご利用ください</dd>
       </dl>
     </div>
-    <p>If you have a github account, please create issue from <a href="https://github.com/jackale/calculate-income/issues/new">here</a>.</p>
+    <p>If you have any requests, please create issue from <a href="https://github.com/jackale/calculate-income/issues/new">here</a>.</p>
     <div class="pop-close">
       <button type="button" id="pop-close">閉じる</button>
     </div>
@@ -110,7 +111,6 @@
           <td>年収</td><td><i class="fa fa-jpy" aria-hidden="true"></i><%=totalIncome%></td>
         </tr>
       </tbody></table>
-      <p>¥<%=totalIncome%></p>
     </div>
   </script>
 
